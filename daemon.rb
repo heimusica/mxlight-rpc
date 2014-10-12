@@ -2,8 +2,9 @@
 
 require './mxlight-rpc'
 
-mxlightd = MXLight::Daemon.new( :mxlight_root => 'C:\MXLight-2.1.8-demo\\',
+mxlightd = MXLight::Daemon.new( :mxlight_root => 'C:\MXLight-2.1.8-demo',
                                 :default_stream_profile => :RTMP,
+                                :stream => :on,
                                 :gui_stats => :hide,
                                 :gui_config => :hide )
 
