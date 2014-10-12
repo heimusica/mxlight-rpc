@@ -9,17 +9,42 @@ $redis = Redis.new()
 module MXLight
   class RPC < Sinatra::Base
 
+
+    def self.get_settings()
+      settings = {}
+      $redis.keys("mxlight.*").each do |k|
+        splits = k.split('.')
+        preset_name, key, value = splits[1], splits[2], $redis.get(k )
+        settings.store(preset_name, {}) if !settings[preset_name]
+        settings[preset_name].store( key, value ) if !settings[preset_name][key]
+      end
+      settings
+    end
+
+    def self.store_settings(settings)
+      settings.each do |preset_name, keys|
+        keys.each do |key, value|
+          $redis.set( "mxlight.#{preset_name}.#{key}", value )
+        end
+      end
+    end
+
+    def self.clear_settings()
+      $redis.keys("mxlight.*").each { |k| $redis.del(k) }
+    end
+
     get '/' do
       ''
     end
 
-    get '/settings'  do
+    post '/settings'  do
     end
 
-    post '/settings' do
-    end
-
-    get '/settings_checksum' do
+    get '/settings' do
+      current_settings = MXLight::RPC::get_settings()
+      p current_settings
+      config_file = MXLight::render_config_file(current_settings )
+      config_file
     end
 
     get '/is_receiving_rtmp' do
@@ -33,6 +58,12 @@ module MXLight
       netstat_output = `netstat -an |grep "my-rtmp-server:1935"`
     end
 
+    def self.load_default_settings()
+      if $redis.keys('mxlight.*').empty?
+        default_settings = YAML.load_file(File.join(File.dirname(__FILE__), 'streams_template.yml'))
+        store_settings(default_settings)
+      end
+    end
   end
   class Daemon
     attr_accessor :params
@@ -79,5 +110,3 @@ module MXLight
     return erb_output.result(binding)
   end
 end
-
-# MXLight::render_config_file( YAML.load_file('streams_template.yml'))
