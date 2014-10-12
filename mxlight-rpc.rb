@@ -42,7 +42,6 @@ module MXLight
 
     get '/settings' do
       current_settings = MXLight::RPC::get_settings()
-      p current_settings
       config_file = MXLight::render_config_file(current_settings )
       config_file
     end
@@ -65,6 +64,7 @@ module MXLight
       end
     end
   end
+
   class Daemon
     attr_accessor :params
     def initialize( params )
