@@ -22,7 +22,7 @@ module MXLight
     end
     def start()
       mxlight_exec = "#{@params[:mxlight_root]}\\MXLight.exe"
-      puts "start #{mxlight_exec} stream-profile=\"#{@params[:default_stream_profile]}\" stream=#{@params[:stream]} gui-stats=#{@params[:gui_stats]} gui-config=#{@params[:gui_config]}"
+      # puts "start #{mxlight_exec} stream-profile=\"#{@params[:default_stream_profile]}\" stream=#{@params[:stream]} gui-stats=#{@params[:gui_stats]} gui-config=#{@params[:gui_config]}"
     end
     def stop
       system('wmic Path win32_process Where "CommandLine Like \'%MXLight.exe%\'" Call Terminate')
@@ -37,4 +37,4 @@ module MXLight
   end
 end
 
-# MXLight::render_config_file( YAML.load_file('streams_template.yml'))
+MXLight::render_config_file( YAML.load_file('streams_template.yml'))
