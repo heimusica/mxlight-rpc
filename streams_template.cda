@@ -1,0 +1,96 @@
+<MXL.
+	<streams.
+		<RTMP.
+			<connection.
+				auto reconnect.[TB32] = <%= settings['rtmp']['auto_reconnect'] %>
+				auto reconnect pause (s).[TS32] = <%= settings['rtmp']['auto_reconnect_pause'] %>
+				initialise min time (s).[TS32] = <%= settings['rtmp']['initialise_min_time'] %>
+				initialise retry count.[TS32] = <%= settings['rtmp']['initialise_retry_count'] %>
+				full stream reinit.[TB32] = <%= settings['rtmp']['full_stream_reinit'] %>
+			>
+			<user vars.
+				Type.[TSTR8] = "rtmp://"
+				Server.[TSTR8] = "<%= settings['rtmp']['server_addr'] %>"
+				Application.[TSTR8] = "<%= settings['rtmp']['app_name'] %>"
+				Play path.[TSTR8] = "<%= settings['rtmp']['play_path'] %>"
+				Authentication.[TSTR8] = "|UV:Server|"
+				Username.[TSTR8] = "<%= settings['rtmp']['username'] %>"
+				Password.[TSTR8] = "<%= settings['rtmp']['password'] %>"
+				Video mode.[TSTR8] = "|UV:Video logo| -vsync cfr -c:v libx264 |UV:Video H264 Profile| -b:v |UV:Video Bitrate (Kbps)|k |UV:Video crop| -g |(|Floor(|UV:Keyframe interval (s)|*(|INstream-fps|/|UV:FPS divider|))|)| |UV:Audio Codec| -maxrate |(|(|UV:Video Bitrate (Kbps)|*1000)+(|UV:Audio Bitrate (Kbps)|*1000)|)| -r |(|(|INstream-fps|/|UV:FPS divider|)|)|"
+				Video crop.[TSTR8] = "-s |UV:Video size X|x|UV:Video size Y|"
+				Video crop-left.[TSTR8] = "<%= settings['rtmp']['video_crop_left'] %>"
+				Video crop-right.[TSTR8] = "<%= settings['rtmp']['video_crop_right'] %>"
+				Video crop-top.[TSTR8] = "<%= settings['rtmp']['video_crop_top'] %>"
+				Video crop-bottom.[TSTR8] = "<%= settings['rtmp']['video_crop_bottom'] %>"
+				Video logo.[TSTR8] = " "
+				Video logo-x.[TSTR8] = "10"
+				Video logo-y.[TSTR8] = "10"
+				Video logo-video file.[TSTR8] = "img/logo video overlay.mov"
+				Video logo-image file.[TSTR8] = "img\\logo image overlay.png"
+				Video size X.[TSTR8] = "<%= settings['rtmp']['video_size_x'] %>"
+				Video size Y.[TSTR8] = "<%= settings['rtmp']['video_size_y'] %>"
+				Video Bitrate (Kbps).[TSTR8] = "<%= settings['rtmp']['video_bitrate'] %>"
+				Video H264 Profile.[TSTR8] = "-profile:v <%= settings['rtmp']['video_h264_profile'] %>"
+				FPS divider.[TSTR8] = "1"
+				Keyframe interval (s).[TSTR8] = "2"
+				Audio Volume adjust (dB).[TSTR8] = "<%= settings['rtmp']['audio_volume_adjust'] %>"
+				Audio Codec.[TSTR8] = "-c:a libvo_aacenc"
+				Audio Channels.[TSTR8] = "-ac <%= settings['rtmp']['audio_channels'] %>"
+				Audio Bitrate (Kbps).[TSTR8] = "<%= settings['rtmp']['audio_bitrate'] %>"
+				Audio Sample rate (Hz).[TSTR8] = "<%= settings['rtmp']['audio_samplerate'] %>"
+				--Buffer size.[TSTR8] = "<%= settings['rtmp']['buffer_size'] %>"
+				--Client buffer time (ms).[TSTR8] = "<%= settings['rtmp']['client_buffer_size'] %>"
+				--Input Mode.[TSTR8] = "-rtbufsize |UV:--Buffer size| -re -f mpegts -c:v:0 h264 -c:a:1 aac -analyzeduration 800000 -fpsprobesize 10"
+				<opts.
+					<Type.
+						RTMP.[TSTR8] = "rtmp://"
+						RTMPS.[TSTR8] = "rtmps://"
+						RTMPE.[TSTR8] = "rtmpe://"
+					>
+					<Video mode.
+						HARDWARE DIRECT.[TSTR8] = "-c:v copy -copyts -r |INstream-fps|"
+						RE-ENCODE.[TSTR8] = "|UV:Video logo| -vsync cfr -c:v libx264 |UV:Video H264 Profile| -b:v |UV:Video Bitrate (Kbps)|k |UV:Video crop| -g |(|Floor(|UV:Keyframe interval (s)|*(|INstream-fps|/|UV:FPS divider|))|)| |UV:Audio Codec| -maxrate |(|(|UV:Video Bitrate (Kbps)|*1000)+(|UV:Audio Bitrate (Kbps)|*1000)|)| -r |(|(|INstream-fps|/|UV:FPS divider|)|)|"
+					>
+					<Authentication.
+						OFF.[TSTR8] = "|UV:Server|"
+						ON.[TSTR8] = "|UV:Username|:|UV:Password|@|UV:Server|"
+					>
+					<Video H264 Profile.
+						baseline.[TSTR8] = "-profile:v baseline"
+						main.[TSTR8] = "-profile:v main"
+						high.[TSTR8] = "-profile:v high"
+					>
+					<Video crop.
+						ON.[TSTR8] = "-vf \"crop=|INstream-V-X|-|(||UV:Video crop-left|+|UV:Video crop-right||)|:|INstream-V-Y|-|(||UV:Video crop-top|+|UV:Video crop-bottom||)|:|UV:Video crop-left|:|UV:Video crop-bottom|,scale=|UV:Video size X|x|UV:Video size Y|\""
+						OFF.[TSTR8] = "-s |UV:Video size X|x|UV:Video size Y|"
+					>
+					<Video logo.
+						ON : Image overlay.[TSTR8] = "-loop 1 -i \"|UV:Video logo-image file|\" -filter_complex overlay=\"|UV:Video logo-x|:|UV:Video logo-y|\""
+						ON : Video overlay.[TSTR8] = "-f lavfi -r |INstream-fps| -i movie=\"|UV:Video logo-video file|\":loop=0 -filter_complex overlay=\"|UV:Video logo-x|:|UV:Video logo-y|\""
+						OFF.[TSTR8] = " "
+					>
+					<Audio Codec.
+						mp3.[TSTR8] = "-c:a mp3"
+						aac (ffmpeg).[TSTR8] = "-strict experimental -c:a aac"
+						aac (visualON).[TSTR8] = "-c:a libvo_aacenc"
+					>
+					<Audio Channels.
+						mono.[TSTR8] = "-ac 1"
+						stereo.[TSTR8] = "-ac 2"
+					>
+					<--Input Mode.
+						default.[TSTR8] = "-rtbufsize |UV:--Buffer size| -re -f mpegts -c:v:0 h264 -c:a:1 aac -analyzeduration 800000 -fpsprobesize 10"
+						low latency.[TSTR8] = "-rtbufsize |UV:--Buffer size| -re -f mpegts -c:v:0 h264 -c:a:1 aac -analyzeduration 500000 -fpsprobesize 6"
+						lowest latency.[TSTR8] = "-rtbufsize |UV:--Buffer size| -f mpegts -c:v:0 h264 -c:a:1 aac -analyzeduration 340000 -fpsprobesize 4"
+						ultra low latency.[TSTR8] = "-rtbufsize |UV:--Buffer size| -re -f mpegts -c:v:0 h264 -c:a:1 aac -analyzeduration 240000 -fpsprobesize 3"
+					>
+				>
+			>
+			command line.[TSTR8] = "|FPE|\"|MXL|utils\\ffmpeg.exe\" |UV:--Input Mode| -i \"tcp://|INstream-ip|:|INstream-port|\" |UV:Video mode| -af \"volume=|UV:Audio Volume adjust (dB)|dB\" |UV:Audio Codec| |UV:Audio Channels| -ar |UV:Audio Sample rate (Hz)| -b:a |UV:Audio Bitrate (Kbps)|k -bufsize 2000k -f flv - |RUN PIPED|\"|MXL|utils\\ffmpeg.exe\" -f flv -i - -c:v copy -copyts -c:a copy -f flv -rtmp_buffer |UV:--Client buffer time (ms)| -rtmp_app \"|UV:Application|\" -rtmp_playpath \"|UV:Play path|\" \"|UV:Type||UV:Authentication|\""
+			short description.[TSTR8] = "RTMP streaming"
+			description.[TSTR8] = "Stream to a RTMP server\r\nHost ip/name = |UV:Server|\r\nApplication = |UV:Application|\r\nPlay path = |UV:Play path|"
+			helpURL.[TSTR8] = "http://mxlight.co.uk/stream-preset-help---rtmp.html"
+		>
+	>
+>
+
